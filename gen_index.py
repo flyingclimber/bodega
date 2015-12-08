@@ -25,7 +25,7 @@ if os.path.isfile(INDEX):
 with open(SOURCE) as f:
     for line in f:
         item, category = line.rstrip().split("\t")
-        MERCHANTS[item[:LENGTH]] = category
+        MERCHANTS[item.lower()[:LENGTH]] = category
 
 with open(INDEX, 'w') as g:
     g.write(json.dumps(MERCHANTS))
