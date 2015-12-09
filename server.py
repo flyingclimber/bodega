@@ -1,26 +1,30 @@
 #!/usr/bin/env python
 
-import argparse
 import json
 from fuzzywuzzy import fuzz
+from flask import Flask
 
-PARSER = argparse.ArgumentParser(description='category lookup')
-PARSER.add_argument('merchant', type=str, help='merchant to lookup')
-
-ARGS = PARSER.parse_args()
-MERCHANT = ARGS.merchant.lower()
-
+APP = Flask(__name__)
 INDEX = 'index.json'
-LENGTH = 8
+MERCHANTS = {}
 
 with open(INDEX) as f:
     MERCHANTS = json.load(f)
 
-    if MERCHANTS.has_key(MERCHANT[:LENGTH]):
-        print MERCHANTS[MERCHANT[:LENGTH]]
+@APP.route("/get/<merchant>")
+def get_merchant(merchant):
+    merchant = merchant.lower()
+    if MERCHANTS.has_key(merchant):
+        return MERCHANTS[merchant]
     else:
         keys = MERCHANTS.keys()
+        res = None
         for key in keys:
-            if fuzz.partial_ratio(ARGS.merchant, key) > 70:
-                print 'FZ', MERCHANTS[key]
+            print "key", key
+            if fuzz.partial_ratio(merchant, key) > 70:
+                res = "FZ " + MERCHANTS[key]
+        return res
+
+if __name__ == "__main__":
+    APP.run(port=8080, debug=True)
 

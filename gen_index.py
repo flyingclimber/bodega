@@ -15,7 +15,6 @@ ARGS = PARSER.parse_args()
 
 SOURCE = ARGS.merchant
 INDEX = 'index.json'
-LENGTH = 8
 MERCHANTS = {}
 
 if os.path.isfile(INDEX):
@@ -24,8 +23,8 @@ if os.path.isfile(INDEX):
 
 with open(SOURCE) as f:
     for line in f:
-        item, category = line.rstrip().split("\t")
-        MERCHANTS[item.lower()[:LENGTH]] = category
+        item, category = line.rstrip().split(",")
+        MERCHANTS[item.lower()] = category
 
 with open(INDEX, 'w') as g:
     g.write(json.dumps(MERCHANTS))
