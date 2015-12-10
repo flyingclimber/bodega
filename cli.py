@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+'''
+cli.py - Command line tool to query index
+'''
+
 import argparse
 import json
 from fuzzywuzzy import fuzz
@@ -10,18 +14,16 @@ PARSER.add_argument('merchant', type=str, help='merchant to lookup')
 ARGS = PARSER.parse_args()
 MERCHANT = ARGS.merchant.lower()
 
-INDEX = 'index.json'
+INDEX_NAME = 'index.json'
 
-with open(INDEX) as f:
-    MERCHANTS = json.load(f)
+with open(INDEX_NAME) as f:
+    INDEX = json.load(f)
 
-merchant = MERCHANT.lower()
-
-if MERCHANTS.has_key(merchant):
-    print MERCHANTS[merchant]
+if MERCHANT in INDEX:
+    print INDEX[MERCHANT]
 else:
-    keys = MERCHANTS.keys()
-    for key in keys:
-        if fuzz.partial_ratio(merchant, key) > 70:
-            print "FZ", key, MERCHANTS[key]
+    KEYS = INDEX.keys()
+    for key in KEYS:
+        if fuzz.partial_ratio(MERCHANT, key) > 70:
+            print "FZ", key, INDEX[key]
 
