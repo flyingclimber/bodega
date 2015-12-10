@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-gen_index - Generate a crystal ball index
+gen_index - Generate a bodega index
 '''
 
 import json
