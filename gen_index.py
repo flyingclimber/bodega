@@ -9,11 +9,11 @@ import os
 import argparse
 
 PARSER = argparse.ArgumentParser(description='index generator')
-PARSER.add_argument('merchant', type=str, help='file to read')
+PARSER.add_argument('file', type=str, help='file to read')
 
 ARGS = PARSER.parse_args()
 
-SOURCE = ARGS.merchant
+SOURCE = ARGS.file
 INDEX = 'index.json'
 MERCHANTS = {}
 
