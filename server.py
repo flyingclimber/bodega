@@ -19,7 +19,7 @@ with open(INDEX) as f:
 @APP.route("/get/<merchant>")
 def get_merchant(merchant):
     merchant = merchant.lower()
-    if MERCHANTS.has_key(merchant):
+    if merchant in MERCHANTS:
         return MERCHANTS[merchant]
     else:
         keys = MERCHANTS.keys()
