@@ -11,6 +11,7 @@ MERCHANTS = {}
 with open(INDEX) as f:
     MERCHANTS = json.load(f)
 
+
 @APP.route("/get/<merchant>")
 def get_merchant(merchant):
     merchant = merchant.lower()
@@ -18,11 +19,10 @@ def get_merchant(merchant):
         return MERCHANTS[merchant]
     else:
         keys = MERCHANTS.keys()
-        res = None
+        res = 'Unknown'
         for key in keys:
-            print "key", key
             if fuzz.partial_ratio(merchant, key) > 70:
-                res = "FZ " + MERCHANTS[key]
+                res = MERCHANTS[key]
         return res
 
 if __name__ == "__main__":
