@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 
+'''
+server.py - Mini flask API
+'''
+
 import json
 from fuzzywuzzy import fuzz
 from flask import Flask
