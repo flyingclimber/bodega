@@ -6,7 +6,7 @@ server.py - Mini flask API
 
 import json
 from fuzzywuzzy import fuzz
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from ConfigParser import ConfigParser
 import os.path
 
@@ -72,15 +72,15 @@ class MerchantIndex:
     def getmerchants(self):
         return self.merchants
 
-    def addmerchant(self, name, category=''):
-        self.merchants[name] = category
+    def addmerchant(self, merchant, category=''):
+        self.merchants[merchant.name] = category
 
     def search(self, term):
         keys = self.merchants.keys()
         res = ''
 
         for key in keys:
-            if fuzz.partial_ratio(term, key) > 70:
+            if fuzz.partial_ratio(term.name, key) > 70:
                 res = self.merchants[key]
         return res
 
@@ -91,9 +91,11 @@ def get_merchant(name):
     category = bodega.index.getmerchantcategory(merchant)
 
     if category:
-        return category
+        res = category
     else:
-        return bodega.index.search(name)
+        res = bodega.index.search(name)
+
+    return jsonify(results=res)
 
 
 @APP.route("/add", methods=['POST'])
@@ -106,17 +108,19 @@ def add_category():
     merchant = Merchant(merchant_name, category)
 
     if not api_key:
-        return 'NO API KEY'
+        res = 'NO API KEY'
     elif not bodega.validapikey(api_key):
-        return 'INVALID API KEY'
+        res = 'INVALID API KEY'
     else:
         if bodega.index.getmerchantcategory(merchant) or\
                         bodega.index.search(merchant) != '':
-            return 'Already Present'
+            res = 'Already Present'
         else:
             bodega.index.addmerchant(merchant, category)
             bodega.saveindex()
-            return 'Added'
+            res = 'Added'
+
+    return jsonify(results=res)
 
 if __name__ == "__main__":
     bodega = Bodega()
