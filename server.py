@@ -21,7 +21,6 @@ class Bodega:
         self.jsonindex = 'index.json'
         self.configfile = 'bodega.conf'
         self.api_keys = []
-        self.index = MerchantIndex()
         self.loadconfig()
         self.loadindex()
 
@@ -64,9 +63,9 @@ class MerchantIndex:
     def __init__(self, items=''):
         self.merchants = items
 
-    def getmerchantcategory(self, name):
-        if name in self.merchants:
-            return self.merchants[name]
+    def getmerchantcategory(self, merchant):
+        if merchant.name in self.merchants:
+            return self.merchants[merchant.name]
         else:
             return ''
 
@@ -89,7 +88,7 @@ class MerchantIndex:
 @APP.route("/get/<name>")
 def get_merchant(name):
     merchant = Merchant(name.lower())
-    category = bodega.index.getmerchantcategory(merchant.name)
+    category = bodega.index.getmerchantcategory(merchant)
 
     if category:
         return category
@@ -111,11 +110,11 @@ def add_category():
     elif not bodega.validapikey(api_key):
         return 'INVALID API KEY'
     else:
-        if bodega.index.getmerchantcategory(merchant.name) or\
-                        bodega.index.search(merchant.name) != '':
+        if bodega.index.getmerchantcategory(merchant) or\
+                        bodega.index.search(merchant) != '':
             return 'Already Present'
         else:
-            bodega.index.addmerchant(merchant.name, category)
+            bodega.index.addmerchant(merchant, category)
             bodega.saveindex()
             return 'Added'
 
