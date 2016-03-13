@@ -5,25 +5,22 @@ cli.py - Command line tool to query index
 '''
 
 import argparse
-import json
-from fuzzywuzzy import fuzz
+from server import Bodega, Merchant
 
 PARSER = argparse.ArgumentParser(description='category lookup')
 PARSER.add_argument('merchant', type=str, help='merchant to lookup')
 
 ARGS = PARSER.parse_args()
-MERCHANT = ARGS.merchant.lower()
+MERCHANT = Merchant(ARGS.merchant.lower())
 
-INDEX_NAME = 'index.json'
+if __name__ == "__main__":
+    bodega = Bodega()
+    res = ''
 
-with open(INDEX_NAME) as f:
-    INDEX = json.load(f)
+    res = bodega.index.getmerchantcategory(MERCHANT)
 
-if MERCHANT in INDEX:
-    print INDEX[MERCHANT]
-else:
-    KEYS = INDEX.keys()
-    for key in KEYS:
-        if fuzz.partial_ratio(MERCHANT, key) > 70:
-            print "FZ", key, INDEX[key]
+    if not res:
+        res = bodega.index.search(MERCHANT)
+
+    print res
 
