@@ -79,5 +79,5 @@ if __name__ == "__main__":
     else:
         load_index()
 
-    APP.run(port=8080, debug=True)
+    APP.run(host='0.0.0.0')
 
