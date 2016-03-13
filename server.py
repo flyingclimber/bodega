@@ -14,10 +14,13 @@ APP = Flask(__name__)
 
 
 class Bodega:
+    """
+        Represents a local market with different types of vendors
+    """
     def __init__(self):
         self.jsonindex = 'index.json'
         self.configfile = 'bodega.conf'
-        self.API_KEYS = []
+        self.api_keys = []
         self.index = MerchantIndex()
         self.loadconfig()
         self.loadindex()
@@ -25,7 +28,7 @@ class Bodega:
     def loadconfig(self):
         config = ConfigParser()
         config.readfp(open(self.configfile))
-        self.API_KEYS.append(config.get('API_KEYS', 'KEYS'))
+        self.api_keys.append(config.get('API_KEYS', 'KEYS'))
 
     def loadindex(self):
         if not os.path.isfile(self.jsonindex):
@@ -39,19 +42,25 @@ class Bodega:
             g.write(json.dumps(self.index.getmerchants()))
 
     def validapikey(self, key):
-        if key in self.API_KEYS:
+        if key in self.api_keys:
             return True
         else:
             return False
 
 
 class Merchant:
+    """
+        Individual seller and their details
+    """
     def __init__(self, name, category=''):
         self.name = name
         self.category = category
 
 
 class MerchantIndex:
+    """
+        The roster of merchants
+    """
     def __init__(self, items=''):
         self.merchants = items
 
@@ -66,7 +75,6 @@ class MerchantIndex:
 
     def addmerchant(self, name, category=''):
         self.merchants[name] = category
-        return True
 
     def search(self, term):
         keys = self.merchants.keys()
@@ -103,7 +111,8 @@ def add_category():
     elif not bodega.validapikey(api_key):
         return 'INVALID API KEY'
     else:
-        if bodega.index.getmerchantcategory(merchant.name) or bodega.index.search(merchant.name) != '':
+        if bodega.index.getmerchantcategory(merchant.name) or\
+                        bodega.index.search(merchant.name) != '':
             return 'Already Present'
         else:
             bodega.index.addmerchant(merchant.name, category)
