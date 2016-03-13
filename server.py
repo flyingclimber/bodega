@@ -8,10 +8,11 @@ import json
 from fuzzywuzzy import fuzz
 from flask import Flask, request
 from ConfigParser import ConfigParser
+import os.path
 
 APP = Flask(__name__)
 INDEX = 'index.json'
-CONFIGFILE = '.config'
+CONFIGFILE = 'bodega.conf'
 MERCHANTS = {}
 API_KEYS = []
 
@@ -19,9 +20,9 @@ config = ConfigParser()
 config.readfp(open(CONFIGFILE))
 API_KEYS.append(config.get('API_KEYS', 'KEYS'))
 
-with open(INDEX) as f:
-    MERCHANTS = json.load(f)
-
+def load_index():
+    with open(INDEX) as f:
+        MERCHANTS = json.load(f)
 
 def save_index():
     with open(INDEX, 'w') as g:
@@ -73,5 +74,10 @@ def add_category():
             return 'Added'
 
 if __name__ == "__main__":
+    if not os.path.isfile(INDEX):
+        save_index()
+    else:
+        load_index()
+
     APP.run(port=8080, debug=True)
 
