@@ -11,73 +11,107 @@ from ConfigParser import ConfigParser
 import os.path
 
 APP = Flask(__name__)
-INDEX = 'index.json'
-CONFIGFILE = 'bodega.conf'
-MERCHANTS = {}
-API_KEYS = []
-
-config = ConfigParser()
-config.readfp(open(CONFIGFILE))
-API_KEYS.append(config.get('API_KEYS', 'KEYS'))
-
-def load_index():
-    with open(INDEX) as f:
-        MERCHANTS = json.load(f)
-
-def save_index():
-    with open(INDEX, 'w') as g:
-        g.write(json.dumps(MERCHANTS))
 
 
-def valid_api_key(key):
-    if key in API_KEYS:
+class Bodega:
+    def __init__(self):
+        self.jsonindex = 'index.json'
+        self.configfile = 'bodega.conf'
+        self.API_KEYS = []
+        self.index = MerchantIndex()
+        self.loadconfig()
+        self.loadindex()
+
+    def loadconfig(self):
+        config = ConfigParser()
+        config.readfp(open(self.configfile))
+        self.API_KEYS.append(config.get('API_KEYS', 'KEYS'))
+
+    def loadindex(self):
+        if not os.path.isfile(self.jsonindex):
+            self.saveindex()
+
+        with open(self.jsonindex) as f:
+            self.index = MerchantIndex(json.load(f))
+
+    def saveindex(self):
+        with open(self.jsonindex, 'w') as g:
+            g.write(json.dumps(self.index.getmerchants()))
+
+    def validapikey(self, key):
+        if key in self.API_KEYS:
+            return True
+        else:
+            return False
+
+
+class Merchant:
+    def __init__(self, name, category=''):
+        self.name = name
+        self.category = category
+
+
+class MerchantIndex:
+    def __init__(self, items=''):
+        self.merchants = items
+
+    def getmerchantcategory(self, name):
+        if name in self.merchants:
+            return self.merchants[name]
+        else:
+            return ''
+
+    def getmerchants(self):
+        return self.merchants
+
+    def addmerchant(self, name, category=''):
+        self.merchants[name] = category
         return True
-    else:
-        return False
 
+    def search(self, term):
+        keys = self.merchants.keys()
+        res = ''
 
-@APP.route("/get/<merchant>")
-def get_merchant(merchant):
-    merchant = merchant.lower()
-    if merchant in MERCHANTS:
-        return MERCHANTS[merchant]
-    else:
-        keys = MERCHANTS.keys()
-        res = 'Unknown'
         for key in keys:
-            if fuzz.partial_ratio(merchant, key) > 70:
-                res = MERCHANTS[key]
+            if fuzz.partial_ratio(term, key) > 70:
+                res = self.merchants[key]
         return res
+
+
+@APP.route("/get/<name>")
+def get_merchant(name):
+    merchant = Merchant(name.lower())
+    category = bodega.index.getmerchantcategory(merchant.name)
+
+    if category:
+        return category
+    else:
+        return bodega.index.search(name)
 
 
 @APP.route("/add", methods=['POST'])
 def add_category():
 
-    merchant = request.form['merchant'].lower()
+    merchant_name = request.form['merchant'].lower()
     category = request.form['category']
     api_key = request.form['api_key']
 
+    merchant = Merchant(merchant_name, category)
+
     if not api_key:
         return 'NO API KEY'
-    elif not valid_api_key(api_key):
+    elif not bodega.validapikey(api_key):
         return 'INVALID API KEY'
     else:
-        if merchant in MERCHANTS:
+        if bodega.index.getmerchantcategory(merchant.name) or bodega.index.search(merchant.name) != '':
             return 'Already Present'
         else:
-            keys = MERCHANTS.keys()
-            for key in keys:
-                if fuzz.partial_ratio(merchant, key) > 70:
-                    return 'FZ Already Present'
-            MERCHANTS[merchant] = category
-            save_index()
+            bodega.index.addmerchant(merchant.name, category)
+            bodega.saveindex()
             return 'Added'
 
 if __name__ == "__main__":
-    if not os.path.isfile(INDEX):
-        save_index()
-    else:
-        load_index()
+    bodega = Bodega()
 
-    APP.run(host='0.0.0.0')
+    APP.run(host='0.0.0.0', debug='true')
 
