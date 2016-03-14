@@ -95,7 +95,7 @@ def get_merchant(name):
     else:
         res = bodega.index.search(name)
 
-    return jsonify(results=res)
+    return format_output(res)
 
 
 @APP.route("/add", methods=['POST'])
@@ -120,6 +120,10 @@ def add_category():
             bodega.saveindex()
             res = 'Added'
 
+    return format_output(res)
+
+
+def format_output(res):
     return jsonify(results=res)
 
 if __name__ == "__main__":
