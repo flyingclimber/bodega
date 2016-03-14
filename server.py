@@ -18,16 +18,17 @@ class Bodega:
         Represents a local market with different types of vendors
     """
     def __init__(self):
-        self.jsonindex = 'index.json'
-        self.configfile = 'bodega.conf'
-        self.api_keys = []
         self.loadconfig()
         self.loadindex()
 
     def loadconfig(self):
+        self.configfile = 'bodega.conf'
+
         config = ConfigParser()
         config.readfp(open(self.configfile))
-        self.api_keys.append(config.get('API_KEYS', 'KEYS'))
+
+        self.jsonindex = config.get('CORE', 'index') or 'index.json'
+        self.api_keys = config.get('API_KEYS', 'KEYS') or []
 
     def loadindex(self):
         if not os.path.isfile(self.jsonindex):
