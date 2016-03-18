@@ -18,10 +18,10 @@ class Bodega:
         Represents a local market with different types of vendors
     """
     def __init__(self):
-        self.loadconfig()
-        self.loadindex()
+        self.load_config()
+        self.load_index()
 
-    def loadconfig(self):
+    def load_config(self):
         self.configfile = 'bodega.conf'
 
         config = ConfigParser()
@@ -30,18 +30,18 @@ class Bodega:
         self.jsonindex = config.get('CORE', 'index') or 'index.json'
         self.api_keys = config.get('API_KEYS', 'KEYS') or []
 
-    def loadindex(self):
+    def load_index(self):
         if not os.path.isfile(self.jsonindex):
-            self.saveindex()
+            self.save_index()
 
         with open(self.jsonindex) as f:
             self.index = MerchantIndex(json.load(f))
 
-    def saveindex(self):
+    def save_index(self):
         with open(self.jsonindex, 'w') as g:
-            g.write(json.dumps(self.index.getmerchants()))
+            g.write(json.dumps(self.index.get_merchants()))
 
-    def validapikey(self, key):
+    def valid_api_key(self, key):
         if key in self.api_keys:
             return True
         else:
@@ -64,16 +64,16 @@ class MerchantIndex:
     def __init__(self, items=''):
         self.merchants = items
 
-    def getmerchantcategory(self, merchant):
+    def get_merchant_category(self, merchant):
         if merchant.name in self.merchants:
             return self.merchants[merchant.name]
         else:
             return ''
 
-    def getmerchants(self):
+    def get_merchants(self):
         return self.merchants
 
-    def addmerchant(self, merchant, category=''):
+    def add_merchant(self, merchant, category=''):
         self.merchants[merchant.name] = category
 
     def search(self, term):
@@ -89,7 +89,7 @@ class MerchantIndex:
 @APP.route("/get/<name>")
 def get_merchant(name):
     merchant = Merchant(name.lower())
-    category = bodega.index.getmerchantcategory(merchant)
+    category = bodega.index.get_merchant_category(merchant)
 
     if category:
         res = category
@@ -110,15 +110,15 @@ def add_category():
 
     if not api_key:
         res = 'NO API KEY'
-    elif not bodega.validapikey(api_key):
+    elif not bodega.valid_api_key(api_key):
         res = 'INVALID API KEY'
     else:
-        if bodega.index.getmerchantcategory(merchant) or\
+        if bodega.index.get_merchant_category(merchant) or\
                         bodega.index.search(merchant) != '':
             res = 'Already Present'
         else:
-            bodega.index.addmerchant(merchant, category)
-            bodega.saveindex()
+            bodega.index.add_merchant(merchant, category)
+            bodega.save_index()
             res = 'Added'
 
     return format_output(res)

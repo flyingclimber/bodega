@@ -17,7 +17,7 @@ if __name__ == "__main__":
     bodega = Bodega()
     res = ''
 
-    res = bodega.index.getmerchantcategory(MERCHANT)
+    res = bodega.index.get_merchant_category(MERCHANT)
 
     if not res:
         res = bodega.index.search(MERCHANT)

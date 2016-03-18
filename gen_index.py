@@ -21,6 +21,6 @@ if __name__ == "__main__":
         for line in f:
             item, category = line.rstrip().split(",")
             merchant = Merchant(item)
-            bodega.index.addmerchant(merchant, category)
+            bodega.index.add_merchant(merchant, category)
 
     bodega.saveindex()
