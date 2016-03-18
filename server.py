@@ -42,11 +42,11 @@ class Bodega:
             g.write(json.dumps(self.index.get_merchants()))
 
     def valid_api_key(self, key):
-        if key in self.api_keys:
-            return True
-        else:
-            return False
-
+        try:
+            res = self.api_keys[key]
+        except KeyError:
+            res = False
+        return res
 
 class Merchant:
     """
@@ -65,10 +65,11 @@ class MerchantIndex:
         self.merchants = items
 
     def get_merchant_category(self, merchant):
-        if merchant.name in self.merchants:
-            return self.merchants[merchant.name]
-        else:
-            return ''
+        try:
+            res = self.merchants[merchant.name]
+        except KeyError:
+            res = False
+        return res
 
     def get_merchants(self):
         return self.merchants
