@@ -13,9 +13,9 @@ PARSER.add_argument('merchant', type=str, help='merchant to lookup')
 ARGS = PARSER.parse_args()
 MERCHANT = Merchant(ARGS.merchant.lower())
 
-if __name__ == "__main__":
+
+def main():
     bodega = Bodega()
-    res = ''
 
     res = bodega.index.get_merchant_category(MERCHANT)
 
@@ -24,3 +24,5 @@ if __name__ == "__main__":
 
     print res
 
+if __name__ == "__main__":
+    main()

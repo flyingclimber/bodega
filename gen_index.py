@@ -14,7 +14,7 @@ ARGS = PARSER.parse_args()
 SOURCE = ARGS.file
 
 
-if __name__ == "__main__":
+def main():
     bodega = Bodega()
 
     with open(SOURCE) as f:
@@ -23,4 +23,7 @@ if __name__ == "__main__":
             merchant = Merchant(item)
             bodega.index.add_merchant(merchant, category)
 
-    bodega.saveindex()
+    bodega.save_index()
+
+if __name__ == "__main__":
+    main()
