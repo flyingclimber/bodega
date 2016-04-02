@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-server.py - Mini flask API
+bodega.py - Mini flask API
 '''
 
 import json

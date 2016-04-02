@@ -5,7 +5,7 @@ gen_index - Generate a bodega index
 '''
 
 import argparse
-from server import Bodega, Merchant
+from bodega import Bodega, Merchant
 
 PARSER = argparse.ArgumentParser(description='index generator')
 PARSER.add_argument('file', type=str, help='file to read')

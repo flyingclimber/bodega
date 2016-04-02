@@ -5,7 +5,7 @@ cli.py - Command line tool to query index
 '''
 
 import argparse
-from server import Bodega, Merchant
+from bodega import Bodega, Merchant
 
 PARSER = argparse.ArgumentParser(description='category lookup')
 PARSER.add_argument('merchant', type=str, help='merchant to lookup')
