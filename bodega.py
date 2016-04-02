@@ -46,7 +46,7 @@ class Merchant:
     """
         Individual seller and their details
     """
-    def __init__(self, name, category=''):
+    def __init__(self, name, category=None):
         self.name = name
         self.category = category
 
@@ -55,8 +55,8 @@ class MerchantIndex:
     """
         The roster of merchants
     """
-    def __init__(self, items=''):
-        self.merchants = items
+    def __init__(self, items=None):
+        self.merchants = items or []
 
     def get_merchant_category(self, merchant):
         try:
@@ -68,7 +68,7 @@ class MerchantIndex:
     def get_merchants(self):
         return self.merchants
 
-    def add_merchant(self, merchant, category=''):
+    def add_merchant(self, merchant, category=None):
         self.merchants[merchant.name] = category
 
     def search(self, term):
