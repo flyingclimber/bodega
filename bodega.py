@@ -96,7 +96,6 @@ def get_merchant(name):
 
 @APP.route("/add", methods=['POST'])
 def add_category():
-
     merchant_name = request.form['merchant'].lower()
     category = request.form['category']
     api_key = request.form['api_key']
@@ -125,5 +124,5 @@ def format_output(res):
 if __name__ == "__main__":
     bodega = Bodega()
 
-    APP.run(host='0.0.0.0', debug='true')
+    APP.run()
 
