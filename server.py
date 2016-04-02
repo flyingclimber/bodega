@@ -22,23 +22,23 @@ class Bodega:
         self.load_index()
 
     def load_config(self):
-        self.configfile = 'bodega.conf'
+        self.config_file = 'bodega.conf'
 
         config = ConfigParser()
-        config.readfp(open(self.configfile))
+        config.readfp(open(self.config_file))
 
-        self.jsonindex = config.get('CORE', 'index') or 'index.json'
+        self.json_index = config.get('CORE', 'index') or 'index.json'
         self.api_keys = config.get('API_KEYS', 'KEYS') or []
 
     def load_index(self):
-        if not os.path.isfile(self.jsonindex):
+        if not os.path.isfile(self.json_index):
             self.save_index()
 
-        with open(self.jsonindex) as f:
+        with open(self.json_index) as f:
             self.index = MerchantIndex(json.load(f))
 
     def save_index(self):
-        with open(self.jsonindex, 'w') as g:
+        with open(self.json_index, 'w') as g:
             g.write(json.dumps(self.index.get_merchants()))
 
     def valid_api_key(self, key):
