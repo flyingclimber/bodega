@@ -76,7 +76,7 @@ class MerchantIndex:
         res = ''
 
         for key in keys:
-            if fuzz.partial_ratio(term.name, key) > 70:
+            if fuzz.partial_ratio(term, key) > 70:
                 res = self.merchants[key]
         return res
 
