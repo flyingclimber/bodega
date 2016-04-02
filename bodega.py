@@ -19,7 +19,7 @@ class Bodega:
     """
     def __init__(self):
         self.json_index = APP.config['INDEX']
-        self.api_keys = APP.config['KEYS']
+        self.api_keys = dict([APP.config['KEYS']])
         self.index = ''
         self.load_index()
 
