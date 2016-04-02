@@ -107,6 +107,8 @@ def get_merchant(name):
     """
         Given a merchant name return if we know about it
     """
+    bodega = Bodega()
+
     merchant = Merchant(name.lower())
     category = bodega.index.get_merchant_category(merchant)
 
@@ -123,6 +125,8 @@ def add_category():
     """
         Add a new merchant
     """
+    bodega = Bodega()
+
     merchant_name = request.form['merchant'].lower()
     category = request.form['category']
     api_key = request.form['api_key']
@@ -152,7 +156,5 @@ def format_output(res):
     return jsonify(results=res)
 
 if __name__ == "__main__":
-    bodega = Bodega()
-
     APP.run()
 
