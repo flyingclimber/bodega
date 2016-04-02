@@ -89,7 +89,7 @@ class MerchantIndex:
         """
         self.merchants[merchant.name] = category
 
-    def search(self, term):
+    def search(self, merchant):
         """
             Given a merchant, see if it's in the index
         """
@@ -97,7 +97,7 @@ class MerchantIndex:
         res = ''
 
         for key in keys:
-            if fuzz.partial_ratio(term, key) > 70:
+            if fuzz.partial_ratio(merchant.name, key) > 70:
                 res = self.merchants[key]
         return res
 
@@ -113,7 +113,7 @@ def get_merchant(name):
     if category:
         res = category
     else:
-        res = bodega.index.search(name)
+        res = bodega.index.search(merchant)
 
     return format_output(res)
 
