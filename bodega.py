@@ -4,13 +4,13 @@
 bodega.py - Mini flask API
 '''
 
+import os.path
 import json
 from fuzzywuzzy import fuzz
 from flask import Flask, request, jsonify
-from ConfigParser import ConfigParser
-import os.path
 
 APP = Flask(__name__)
+APP.config.from_pyfile('config.py')
 
 
 class Bodega:
@@ -18,17 +18,10 @@ class Bodega:
         Represents a local market with different types of vendors
     """
     def __init__(self):
-        self.load_config()
+        self.json_index = APP.config['INDEX']
+        self.api_keys = APP.config['KEYS']
+        self.index = ''
         self.load_index()
-
-    def load_config(self):
-        self.config_file = 'bodega.conf'
-
-        config = ConfigParser()
-        config.readfp(open(self.config_file))
-
-        self.json_index = config.get('CORE', 'index') or 'index.json'
-        self.api_keys = config.get('API_KEYS', 'KEYS') or []
 
     def load_index(self):
         if not os.path.isfile(self.json_index):
@@ -47,6 +40,7 @@ class Bodega:
         except KeyError:
             res = False
         return res
+
 
 class Merchant:
     """
