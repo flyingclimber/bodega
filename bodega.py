@@ -12,6 +12,8 @@ from flask import Flask, request, jsonify
 APP = Flask(__name__)
 APP.config.from_pyfile('config.py')
 
+HOST = APP.config['HOST']
+PORT = APP.config['PORT']
 
 class Bodega:
     """
@@ -156,5 +158,8 @@ def format_output(res):
     return jsonify(results=res)
 
 if __name__ == "__main__":
-    APP.run()
+    APP.run(
+	host=HOST,
+	port=PORT
+    )
 
